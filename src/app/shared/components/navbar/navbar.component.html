@@ -1,0 +1,17 @@
+<mat-toolbar>
+    <span>Secure Storage</span>
+    <span class="spacer"></span>
+    @if (!user()) {
+    <button class="navbar-button" mat-stroked-button [routerLink]="['login']">Login</button>
+    <button class="navbar-button" mat-flat-button [routerLink]="['register']">Register</button>
+    } @else {
+    <span class="username">Hello, <b>{{user()?.username}}</b></span>
+    <button mat-icon-button [matMenuTriggerFor]="menu">
+        <mat-icon>menu</mat-icon>
+        <mat-menu #menu="matMenu">
+            <button mat-menu-item (click)="logout()">Logout</button>
+        </mat-menu>
+    </button>
+    }
+
+</mat-toolbar>
