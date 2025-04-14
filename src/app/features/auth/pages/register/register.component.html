@@ -1,0 +1,29 @@
+<form [formGroup]="formRegister" class="register-container">
+    <mat-form-field>
+        <mat-label>Username</mat-label>
+        <input matInput formControlName="username">
+    </mat-form-field>
+    <mat-form-field>
+        <mat-label>Email</mat-label>
+        <input matInput formControlName="email" type="email">
+        @if (formRegister.controls["email"].invalid) {
+        <mat-error>{{errorMessage()}}</mat-error>
+        }
+    </mat-form-field>
+    <mat-form-field>
+        <mat-label>Password</mat-label>
+        <input matInput formControlName="password" [type]="hide() ? 'password' : 'text'" />
+        <button mat-icon-button matSuffix (click)="togglePasswordVisibility()" [attr.aria-label]="'Hide password'"
+            [attr.aria-pressed]="hide()">
+            <mat-icon>{{hide() ? 'visibility_off' : 'visibility'}}</mat-icon>
+        </button>
+        @if (formRegister.controls["password"].hasError("minlength")) {
+        <mat-error>{{errorMessage()}}</mat-error>
+        }
+    </mat-form-field>
+    <button class="register-button" mat-raised-button (click)="register()">Register</button>
+
+    @if (loading()) {
+    <mat-spinner diameter="50"></mat-spinner>
+    }
+</form>

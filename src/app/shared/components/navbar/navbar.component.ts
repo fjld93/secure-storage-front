@@ -19,7 +19,7 @@ export class NavbarComponent {
   private authService: AuthService = inject(AuthService);
   private router: Router = inject(Router);
 
-  user: Signal<User | null> = this.authService.user();
+  user: Signal<User | null> = this.authService.user;
 
   logout(){
 

@@ -16,6 +16,7 @@ export class AuthService {
 
   private readonly TOKEN_KEY = 'auth_token';
   private _user = signal<User | null>(null);
+  readonly user = this._user;
 
   constructor() {
 
@@ -65,11 +66,6 @@ export class AuthService {
   isLoggedIn(): boolean {
 
     return !!sessionStorage.getItem(this.TOKEN_KEY);
-  }
-
-  user(): Signal<User | null>{
-
-    return this._user;
   }
 
   private _getUsernameFromToken(): string | null {
