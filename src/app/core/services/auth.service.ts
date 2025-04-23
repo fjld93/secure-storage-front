@@ -14,6 +14,7 @@ export class AuthService {
 
   private http: HttpClient = inject(HttpClient);
 
+  private readonly baseUrl = environment.apiUrl;
   private readonly TOKEN_KEY = 'auth_token';
   private _user = signal<User | null>(null);
   readonly user = this._user;
@@ -27,7 +28,7 @@ export class AuthService {
 
   login(credentials: LoginRequest): Observable<void> {
 
-    return this.http.post<AuthResponse>(`${environment.apiUrl}/auth/login`, credentials).pipe(
+    return this.http.post<AuthResponse>(`${this.baseUrl}/auth/login`, credentials).pipe(
       tap(res => {
         sessionStorage.setItem(this.TOKEN_KEY, res.token);
         this._user.set({ "username": credentials.username });
@@ -43,7 +44,7 @@ export class AuthService {
 
   register(data: RegisterRequest): Observable<void> {
 
-    return this.http.post<AuthResponse>(`${environment.apiUrl}/auth/register`, data).pipe(
+    return this.http.post<AuthResponse>(`${this.baseUrl}/auth/register`, data).pipe(
       tap(res => {
         sessionStorage.setItem(this.TOKEN_KEY, res.token);
         this._user.set({ "username": data.username });
