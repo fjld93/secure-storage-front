@@ -69,13 +69,13 @@ export class RegisterComponent {
           next: () => {
             this._snackBar.open(`Successfully registered as: ${this.authService.user()?.username}`, '', {
               duration: 2000
-            })
+            });
             this.router.navigate(['/']);
           },
           error: (error) => {
             this._snackBar.open(String(error), '', {
               duration: 2000
-            })
+            });
           }
         })
     }

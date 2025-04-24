@@ -11,7 +11,7 @@ import { UserDocument } from '@models/documents/user-document.model';
 export class DocumentService {
 
   private http: HttpClient = inject(HttpClient);
-  private readonly baseUrl = environment.apiUrl;
+  private readonly baseUrl =`${environment.apiUrl}/api/documents`;
 
   private handleError(error: HttpErrorResponse): Observable<never> {
     return throwError(() => new Error(`Status: ${error.status}, error: ${error.message}`));
@@ -68,7 +68,8 @@ export class DocumentService {
       .pipe(catchError(this.handleError));
   }
 
-  updateMetadata(metadataUuid: string, metadata: Metadata): Observable<Metadata> {
+  updateMetadata(metadataUuid: string, 
+                  metadata: Partial<Pick<Metadata, 'name' | 'value'>>): Observable<Metadata> {
     return this.http
       .put<Metadata>(`${this.baseUrl}/metadata/${metadataUuid}`, metadata)
       .pipe(catchError(this.handleError));

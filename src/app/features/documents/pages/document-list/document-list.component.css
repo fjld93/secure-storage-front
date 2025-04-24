@@ -6,10 +6,25 @@
     height: calc(100% - var(--mat-toolbar-standard-height));
 }
 
+.tools-container {
+    display: flex;
+    flex-direction: column;
+    height: 25%;
+    margin-top: 2rem;
+}
+
 .document-list {
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: space-evenly;
+}
+
+.document-row:hover {
+    background-color: antiquewhite;
+}
+
+.document-row.selected-row {
+    background-color: aquamarine;
 }
 
 .documents-filter {
@@ -19,10 +34,24 @@
     margin: 0 auto;
 }
 
-.document-toolbar{
-    max-width: 200px;
+.document-toolbar {
     background-color: var(--mdc-filled-text-field-container-color);
-    margin: 1rem auto;
+    margin: 2rem auto;
     border-radius: 1.5rem;
     height: 3rem;
+    width: 95%;
+    padding: 1rem;
+}
+
+.table-container {
+    height: 75%;
+    padding: 0 2rem;
+}
+
+.fab-button {
+    position: absolute;
+    bottom: 40px;
+    right: 40px;
+    z-index: 1000;
+    transition: right 0.3s ease;
 }

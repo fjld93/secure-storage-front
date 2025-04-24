@@ -1,0 +1,76 @@
+<div class="close-button-container">
+    <button mat-icon-button (click)="closeSidenav()">
+        <mat-icon>close</mat-icon>
+    </button>
+</div>
+@if (document) {
+<mat-tab-group preserveContent (selectedTabChange)="onTabChange($event)">
+    <mat-tab label="Details">
+        <div class="details-container">
+            <div class="property-container">
+                <span>Name: </span>
+                <p>{{document.name}}</p>
+            </div>
+            <mat-divider></mat-divider>
+            <div class="property-container">
+                <span>Description: </span>
+                <p>{{document.description}}</p>
+            </div>
+            <mat-divider></mat-divider>
+            <div class="property-container">
+                <span>Document size: </span>
+                <p>{{document.size | fileSize}}</p>
+            </div>
+            <mat-divider></mat-divider>
+            <div class="property-container">
+                <span>Creation time: </span>
+                <p>{{document.createTime | date}}</p>
+            </div>
+            <mat-divider></mat-divider>
+            <div class="property-container">
+                <span>Last update: </span>
+                <p>{{document.updateTime | date}}</p>
+            </div>
+        </div>
+    </mat-tab>
+    <mat-tab label="Metadata">
+        <ng-template matTabContent>
+            <div class="metadata-list-container">
+                <button mat-flat-button extended color="primary" class="add-metadata-button" (click)="openEditDialog()">
+                    <mat-icon>add</mat-icon>
+                    Add metadata
+                </button>
+                @if (metadata.length > 0) {
+                @for (data of metadata; track $index) {
+                <div class="metadata-container">
+                    <p>
+                        <span>{{data.name | titlecase}}</span>
+                        {{data.value | titlecase}}
+                    </p>
+                    <span class="metadata-icons-container">
+                        <button mat-icon-button (click)="openEditDialog(data)">
+                            <mat-icon>edit</mat-icon>
+                        </button>
+                        <button mat-icon-button (click)="deleteElementDialog(data)">
+                            <mat-icon>delete</mat-icon>
+                        </button>
+                    </span>
+                </div>
+                <mat-divider></mat-divider>
+                }
+                }
+                @else {
+                <div class="no-content">
+                    <p>No metadata available for this document.</p>
+                </div>
+                }
+            </div>
+        </ng-template>
+    </mat-tab>
+</mat-tab-group>
+}
+@else {
+<div class="no-content">
+    <p>Please, select a document.</p>
+</div>
+}

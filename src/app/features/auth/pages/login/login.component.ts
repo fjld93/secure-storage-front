@@ -64,7 +64,7 @@ export class LoginComponent {
             this._snackBar.open(`Successfully logged as: ${this.authService.user()?.username}`, '', {
               duration: 2000
             })
-            this.router.navigate(['/']);
+            this.router.navigate(['/documents']);
           },
           error: (error) => {
             this._snackBar.open(String(error), '', {

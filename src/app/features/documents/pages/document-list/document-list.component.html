@@ -1,57 +1,75 @@
 <mat-sidenav-container class="container">
+
   <mat-sidenav-content class="document-list">
-    <mat-form-field hide-subscript-wrapper class="documents-filter">
-      <mat-label>Filter</mat-label>
-      <input matInput (keyup)="applyFilter($event)" placeholder="Document name, metadata, etc..." #input>
-    </mat-form-field>
+    <div class="tools-container">
 
-    <mat-toolbar class="document-toolbar">
-      <span class="spacer"></span>
-      <button mat-icon-button>
-        <mat-icon>note_add</mat-icon>
-      </button>
-      <button mat-icon-button>
-        <mat-icon>edit_document</mat-icon>
-      </button>
-      <button mat-icon-button>
-        <mat-icon>delete</mat-icon>
-      </button>
-      <span class="spacer"></span>
-    </mat-toolbar>
+      <mat-form-field hide-subscript-wrapper class="documents-filter">
+        <mat-label>Filter</mat-label>
+        <input matInput (keyup)="applyFilter($event)" placeholder="Document name, metadata, etc..." #input>
+      </mat-form-field>
 
-    <table mat-table [dataSource]="dataSource" class="mat-elevation-z8" matSort>
+      @if (selectedDocument) {
+      <mat-toolbar class="document-toolbar">
+        <button mat-icon-button matTooltip="Cancel selection" matTooltipPosition="above" (click)="clearSelection()">
+          <mat-icon>close</mat-icon>
+        </button>
+        <button mat-icon-button matTooltip="Edit document" matTooltipPosition="above">
+          <mat-icon>edit_document</mat-icon>
+        </button>
+        <button mat-icon-button matTooltip="Delete document" matTooltipPosition="above">
+          <mat-icon>delete</mat-icon>
+        </button>
+        <button mat-icon-button matTooltip="Download document" matTooltipPosition="above">
+          <mat-icon>download</mat-icon>
+        </button>
+        <button mat-icon-button matTooltip="View details" matTooltipPosition="above"
+        (click)="toggleDocumentDetails()">
+          <mat-icon>info</mat-icon>
+        </button>
+        <span class="spacer"></span>
+      </mat-toolbar>
+      }
+    </div>
 
-      <ng-container matColumnDef="position">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header> No. </th>
-        <td mat-cell *matCellDef="let element"> {{element.position}} </td>
-      </ng-container>
+    <div class="table-container">
 
-      <ng-container matColumnDef="name">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header> Name </th>
-        <td mat-cell *matCellDef="let element"> {{element.name}} </td>
-      </ng-container>
+      <table mat-table [dataSource]="dataSource" class="mat-elevation-z8" matSort>
 
-      <ng-container matColumnDef="weight">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header> Weight </th>
-        <td mat-cell *matCellDef="let element"> {{element.weight}} </td>
-      </ng-container>
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> Name </th>
+          <td mat-cell *matCellDef="let document"> {{document.name}} </td>
+        </ng-container>
 
-      <ng-container matColumnDef="symbol">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header> Symbol </th>
-        <td mat-cell *matCellDef="let element"> {{element.symbol}} </td>
-      </ng-container>
+        <ng-container matColumnDef="updateTime">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> Last Update </th>
+          <td mat-cell *matCellDef="let document"> {{document.updateTime | date}} </td>
+        </ng-container>
 
-      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        <ng-container matColumnDef="size">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> Size </th>
+          <td mat-cell *matCellDef="let document"> {{document.size}} </td>
+        </ng-container>
 
-      <!-- Row shown when there is no matching data. -->
-      <tr class="mat-row" *matNoDataRow>
-        <td class="mat-cell" colspan="4">No data matching the filter "{{input.value}}"</td>
-      </tr>
-    </table>
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="selectDocument(row)" class="document-row"
+          [class]="row.uuid === selectedDocument?.uuid ? 'selected-row' : ''"></tr>
 
-    <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Select page of documents"></mat-paginator>
+        <tr class="mat-row" *matNoDataRow>
+          <td class="mat-cell" colspan="4">No data matching the filter "{{input.value}}"</td>
+        </tr>
+      </table>
+
+      <mat-paginator [pageSizeOptions]="[10, 20, 50, 100]" [pageSize]="20"
+        aria-label="Select page of documents"></mat-paginator>
+
+    </div>
+    <button mat-fab extended color="primary" class="fab-button" aria-label="Add new document">
+      <mat-icon>note_add</mat-icon>
+      New document
+    </button>
 
   </mat-sidenav-content>
-  <mat-sidenav position="end" mode="side">End</mat-sidenav>
+  <mat-sidenav #sidenav position="end" mode="side">
+    <app-document-details [document] = "selectedDocument!" (close)="clearSelection()"></app-document-details>
+  </mat-sidenav>
 </mat-sidenav-container>

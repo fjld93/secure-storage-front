@@ -1,0 +1,22 @@
+<h2 mat-dialog-title>{{data.uuid === "" ? "Create" : "Edit"}} Metadata</h2>
+<mat-dialog-content>
+    <form [formGroup]="metadataForm">
+        <mat-form-field>
+            <mat-label>Name</mat-label>
+            <input matInput formControlName="name" />
+        </mat-form-field>
+
+        <mat-form-field>
+            <mat-label>Value</mat-label>
+            <input matInput formControlName="value" />
+        </mat-form-field>
+
+        @if (metadataForm.invalid) {
+        <mat-error>{{errorMessage()}}</mat-error>
+        }
+    </form>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+    <button mat-button (click)="onNoClick()">Cancel</button>
+    <button mat-button (click)="okClick()" cdkFocusInitial>Save</button>
+</mat-dialog-actions>
