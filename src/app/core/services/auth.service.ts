@@ -78,7 +78,7 @@ export class AuthService {
     try {
       const payloadB64 = token.split('.')[1];
       const decodedPayload = JSON.parse(atob(payloadB64));
-      return decodedPayload.username ?? null;
+      return decodedPayload.sub ?? null;
 
     } catch (err) {
       return null;

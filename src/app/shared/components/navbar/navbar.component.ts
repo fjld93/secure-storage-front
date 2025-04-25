@@ -1,4 +1,4 @@
-import { Component, inject, Signal, signal } from '@angular/core';
+import { Component, computed, inject, Signal, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { MATERIAL_IMPORTS } from '@materials/material.imports';
 import { User } from '@models/user.model';
@@ -19,7 +19,7 @@ export class NavbarComponent {
   private authService: AuthService = inject(AuthService);
   private router: Router = inject(Router);
 
-  user: Signal<User | null> = this.authService.user;
+  user: Signal<User | null> = computed(() => this.authService.user());
 
   logout(){
 
