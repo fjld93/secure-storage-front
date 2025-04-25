@@ -1,0 +1,32 @@
+<h2 mat-dialog-title>{{data.uuid === '' ? 'Add' : 'Edit'}} Document</h2>
+<mat-dialog-content>
+    <form [formGroup]="documentForm" class="form">
+        <mat-form-field>
+            <mat-label>Name</mat-label>
+            <input matInput formControlName="name" />
+        </mat-form-field>
+
+        <mat-form-field>
+            <mat-label>Description</mat-label>
+            <input matInput formControlName="description" />
+        </mat-form-field>
+
+        @if (data.uuid === "") {
+        <div class="dropzone" (click)="fileInput.click()" (drop)="onFileDrop($event)" (dragover)="onDragOver($event)"
+            (dragleave)="onDragLeave($event)" [class.dropzone-hovered]="isHovered">
+
+            <p>{{ selectedFileName !== "" ? "📄" + selectedFileName : "Drag and drop a file here or click to select" }}</p>
+            <input type="file" hidden #fileInput (change)="onFileSelected($event)" />
+
+        </div>
+        }
+
+        @if (errorMessage()) {
+        <mat-error>{{ errorMessage() }}</mat-error>
+        }
+    </form>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+    <button mat-button (click)="onNoClick()">Cancel</button>
+    <button mat-button (click)="okClick()" cdkFocusInitial>Save</button>
+</mat-dialog-actions>

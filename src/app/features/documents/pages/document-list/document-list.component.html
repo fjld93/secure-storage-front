@@ -10,20 +10,24 @@
 
       @if (selectedDocument) {
       <mat-toolbar class="document-toolbar">
-        <button mat-icon-button matTooltip="Cancel selection" matTooltipPosition="above" (click)="clearSelection()">
+        <button mat-icon-button matTooltip="Cancel selection" matTooltipPosition="above" 
+          (click)="clearSelection()">
           <mat-icon>close</mat-icon>
         </button>
-        <button mat-icon-button matTooltip="Edit document" matTooltipPosition="above">
+        <button mat-icon-button matTooltip="Edit document" matTooltipPosition="above"
+          (click)="openEditDialog(selectedDocument)">
           <mat-icon>edit_document</mat-icon>
         </button>
-        <button mat-icon-button matTooltip="Delete document" matTooltipPosition="above">
+        <button mat-icon-button matTooltip="Delete document" matTooltipPosition="above"
+          (click)="deleteElementDialog(selectedDocument)">
           <mat-icon>delete</mat-icon>
         </button>
-        <button mat-icon-button matTooltip="Download document" matTooltipPosition="above">
+        <button mat-icon-button matTooltip="Download document" matTooltipPosition="above"
+          (click)="downloadDocument(selectedDocument)">
           <mat-icon>download</mat-icon>
         </button>
-        <button mat-icon-button matTooltip="View details" matTooltipPosition="above"
-        (click)="toggleDocumentDetails()">
+        <button mat-icon-button matTooltip="View details" matTooltipPosition="above" 
+          (click)="toggleDocumentDetails()">
           <mat-icon>info</mat-icon>
         </button>
         <span class="spacer"></span>
@@ -47,7 +51,7 @@
 
         <ng-container matColumnDef="size">
           <th mat-header-cell *matHeaderCellDef mat-sort-header> Size </th>
-          <td mat-cell *matCellDef="let document"> {{document.size}} </td>
+          <td mat-cell *matCellDef="let document"> {{document.size | fileSize}} </td>
         </ng-container>
 
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
@@ -63,13 +67,14 @@
         aria-label="Select page of documents"></mat-paginator>
 
     </div>
-    <button mat-fab extended color="primary" class="fab-button" aria-label="Add new document">
+    <button mat-fab extended color="primary" class="fab-button" aria-label="Add new document"
+      (click)="openEditDialog()">
       <mat-icon>note_add</mat-icon>
       New document
     </button>
 
   </mat-sidenav-content>
   <mat-sidenav #sidenav position="end" mode="side">
-    <app-document-details [document] = "selectedDocument!" (close)="clearSelection()"></app-document-details>
+    <app-document-details [document]="selectedDocument!" (close)="clearSelection()"></app-document-details>
   </mat-sidenav>
 </mat-sidenav-container>

@@ -3,11 +3,16 @@ import { AfterViewInit, Component, inject, ViewChild } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSidenav } from '@angular/material/sidenav';
 import { MatSort } from '@angular/material/sort';
-import { MatTableDataSource } from '@angular/material/table';
+import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { MATERIAL_IMPORTS } from '@materials/material.imports';
 import { UserDocument } from '@models/documents/user-document.model';
 import { DocumentService } from '@services/document.service';
 import { DocumentDetailsComponent } from "../document-details/document-details.component";
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatDialog } from '@angular/material/dialog';
+import { EditDocumentDialogComponent } from '@documents/components/edit-document-dialog/edit-document-dialog.component';
+import { FileSizePipe } from '@pipes/file-size.pipe';
+import { DeleteElementDialogComponent } from '@documents/components/delete-element-dialog/delete-element-dialog.component';
 
 
 @Component({
@@ -16,14 +21,18 @@ import { DocumentDetailsComponent } from "../document-details/document-details.c
   imports: [
     MATERIAL_IMPORTS,
     DatePipe,
-    DocumentDetailsComponent
-],
+    FileSizePipe,
+    DocumentDetailsComponent,
+  ],
   templateUrl: './document-list.component.html',
   styleUrl: './document-list.component.css'
 })
 export class DocumentListComponent implements AfterViewInit {
 
   private documentService: DocumentService = inject(DocumentService);
+  private _snackBar = inject(MatSnackBar);
+
+  readonly dialog = inject(MatDialog);
 
   displayedColumns: string[] = ['name', 'updateTime', 'size'];
   dataSource = new MatTableDataSource<UserDocument>();
@@ -52,6 +61,12 @@ export class DocumentListComponent implements AfterViewInit {
     }
   }
 
+  showErrorMessage(error: string) {
+    this._snackBar.open(String(error), '', {
+      duration: 2000
+    })
+  }
+
   loadDocuments() {
     this.documentService.getAllUserDocuments().subscribe({
       next: documents => {
@@ -65,13 +80,108 @@ export class DocumentListComponent implements AfterViewInit {
     this.selectedDocument = doc;
   }
 
-  clearSelection(){
+  clearSelection() {
     this.selectedDocument = undefined;
     this.sidenav.close();
   }
 
-  toggleDocumentDetails(){
+  toggleDocumentDetails() {
     this.sidenav.toggle()
+  }
+
+  openEditDialog(doc: UserDocument = { uuid: "", name: "", description: "", size: 0 }) {
+    const dialogRef = this.dialog.open(EditDocumentDialogComponent, {
+      height: doc.uuid !== "" ? "50%" : "60%",
+      width: "30%",
+      maxHeight: doc.uuid !== "" ? "330px" : "430px",
+      data: doc,
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        if (doc.uuid) {
+          const { name, description } = result;
+          this.updateDocument(doc.uuid, { name, description });
+        }
+        else {
+          const { name, description, file } = result;
+          this.createDocument(name, description, file);
+        }
+      }
+    });
+  }
+
+  deleteElementDialog(doc: UserDocument) {
+    const dialogRef = this.dialog.open(DeleteElementDialogComponent, { width: "30%", });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.documentService.deleteDocument(doc.uuid).subscribe({
+          next: () => {
+            const index = this.dataSource.data.findIndex(d => d.uuid === doc.uuid);
+            if (index > -1) {
+              const updatedSource = [...this.dataSource.data];
+              updatedSource.splice(index, 1);
+              this.dataSource.data = updatedSource;
+              this.clearSelection();
+            }
+          },
+          error: err => this.showErrorMessage("Error deleting the metadata")
+        });
+      }
+    });
+  }
+
+  updateDocument(documentUuid: string, updatedDocument: Partial<Pick<UserDocument, 'name' | 'description'>>) {
+
+    this.documentService.updateDocument(documentUuid, updatedDocument).subscribe({
+      next: (newDocument) => {
+
+        const index = this.dataSource.data.findIndex(doc => doc.uuid === newDocument.uuid);
+
+        if (index > -1) {
+          const updatedSource = [...this.dataSource.data];
+          updatedSource[index] = newDocument;
+          this.dataSource.data = updatedSource;
+        }
+        this.clearSelection();
+      },
+      error: err => this.showErrorMessage("Error adding the metadata")
+    });
+  }
+
+  createDocument(name: string, description: string, file: File) {
+
+    const newDocument = {
+      name,
+      description,
+      content: file,
+    };
+
+    this.documentService.createDocument(newDocument).subscribe({
+      next: (createdDocument) => {
+        this.dataSource.data = [...this.dataSource.data, createdDocument];
+        this.clearSelection();
+      },
+      error: err => this.showErrorMessage("Error creating document")
+    });
+
+  }
+
+  downloadDocument(document: UserDocument) {
+    this.documentService.getDocumentContent(document.uuid).subscribe({
+      next: (content) => {
+        const blobUrl = window.URL.createObjectURL(content);
+        const a = window.document.createElement('a');
+        a.href = blobUrl;
+        a.download = document.name;
+        a.style.display = 'none';
+        window.document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(blobUrl);
+        window.document.body.removeChild(a);
+      }
+    });
   }
 
 }

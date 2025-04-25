@@ -1,4 +1,4 @@
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpResponse } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { catchError, map, Observable, throwError } from 'rxjs';
 import { environment } from '../../../environments/environment';
@@ -11,7 +11,7 @@ import { UserDocument } from '@models/documents/user-document.model';
 export class DocumentService {
 
   private http: HttpClient = inject(HttpClient);
-  private readonly baseUrl =`${environment.apiUrl}/api/documents`;
+  private readonly baseUrl = `${environment.apiUrl}/api/documents`;
 
   private handleError(error: HttpErrorResponse): Observable<never> {
     return throwError(() => new Error(`Status: ${error.status}, error: ${error.message}`));
@@ -35,22 +35,26 @@ export class DocumentService {
       .pipe(catchError(this.handleError));
   }
 
-  getDocumentContent(documentUuid: string): Observable<string> {
-    return this.http
-      .get<{ content: string }>(`${this.baseUrl}/${documentUuid}/content`)
-      .pipe(
-        map(response => response.content),
-        catchError(this.handleError));
+  getDocumentContent(documentUuid: string): Observable<Blob> {
+    return this.http.get(`${this.baseUrl}/${documentUuid}/content`, {
+      responseType: 'blob'
+    })
+      .pipe(catchError(this.handleError));
   }
 
   createDocument(document: Omit<UserDocument, 'uuid'>): Observable<UserDocument> {
+    const formData = new FormData();
+    formData.append('file', document.content!);
+    formData.append('name', document.name);
+    formData.append('description', document.description);
+
     return this.http
-      .post<UserDocument>(`${this.baseUrl}/documents`, document)
+      .post<UserDocument>(`${this.baseUrl}`, formData)
       .pipe(catchError(this.handleError));
   }
 
   updateDocument(documentUuid: string,
-                  updates: Partial<Pick<UserDocument, 'name' | 'description'>>): Observable<UserDocument> {
+    updates: Partial<Pick<UserDocument, 'name' | 'description'>>): Observable<UserDocument> {
     return this.http
       .put<UserDocument>(`${this.baseUrl}/${documentUuid}`, updates)
       .pipe(catchError(this.handleError));
@@ -68,8 +72,8 @@ export class DocumentService {
       .pipe(catchError(this.handleError));
   }
 
-  updateMetadata(metadataUuid: string, 
-                  metadata: Partial<Pick<Metadata, 'name' | 'value'>>): Observable<Metadata> {
+  updateMetadata(metadataUuid: string,
+    metadata: Partial<Pick<Metadata, 'name' | 'value'>>): Observable<Metadata> {
     return this.http
       .put<Metadata>(`${this.baseUrl}/metadata/${metadataUuid}`, metadata)
       .pipe(catchError(this.handleError));

@@ -5,10 +5,10 @@ export interface UserDocument {
     uuid: string;
     name: string;
     description: string;
-    size: number;
+    size?: number;
     createTime?: Date;
     updateTime?: Date;
-    content?: string;
+    content?: File;
     metadata?: Metadata[];
 
 }
