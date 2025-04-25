@@ -29,11 +29,16 @@ export class LoginComponent {
   loading = signal(false);
 
   constructor() {
-
+    
     this.formLogin = this.fb.group({
       username: ["", Validators.required],
       password: ["", [Validators.required, Validators.minLength(4)]]
-    })
+    });
+
+    if (this.authService.isLoggedIn()) {
+      this.router.navigate(['/documents']);
+      return;
+    }
 
   }
 
