@@ -10,8 +10,7 @@
 
       @if (selectedDocument) {
       <mat-toolbar class="document-toolbar">
-        <button mat-icon-button matTooltip="Cancel selection" matTooltipPosition="above" 
-          (click)="clearSelection()">
+        <button mat-icon-button matTooltip="Cancel selection" matTooltipPosition="above" (click)="clearSelection()">
           <mat-icon>close</mat-icon>
         </button>
         <button mat-icon-button matTooltip="Edit document" matTooltipPosition="above"
@@ -26,8 +25,7 @@
           (click)="downloadDocument(selectedDocument)">
           <mat-icon>download</mat-icon>
         </button>
-        <button mat-icon-button matTooltip="View details" matTooltipPosition="above" 
-          (click)="toggleDocumentDetails()">
+        <button mat-icon-button matTooltip="View details" matTooltipPosition="above" (click)="toggleDocumentDetails()">
           <mat-icon>info</mat-icon>
         </button>
         <span class="spacer"></span>
@@ -63,8 +61,8 @@
         </tr>
       </table>
 
-      <mat-paginator [pageSizeOptions]="[10, 20, 50, 100]" [pageSize]="20"
-        aria-label="Select page of documents"></mat-paginator>
+      <mat-paginator [pageSizeOptions]="[10, 20, 50, 100]" (page)="onPageChange($event)" [pageSize]="pageSize"
+        [pageIndex]="pageIndex" [length]="totalDocuments" aria-label="Select page of documents"></mat-paginator>
 
     </div>
     <button mat-fab extended color="primary" class="fab-button" aria-label="Add new document"

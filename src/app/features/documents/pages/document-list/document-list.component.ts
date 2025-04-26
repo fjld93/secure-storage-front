@@ -1,6 +1,6 @@
 import { DatePipe } from '@angular/common';
 import { AfterViewInit, Component, inject, ViewChild } from '@angular/core';
-import { MatPaginator } from '@angular/material/paginator';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSidenav } from '@angular/material/sidenav';
 import { MatSort } from '@angular/material/sort';
 import { MatTable, MatTableDataSource } from '@angular/material/table';
@@ -36,6 +36,9 @@ export class DocumentListComponent implements AfterViewInit {
 
   displayedColumns: string[] = ['name', 'updateTime', 'size'];
   dataSource = new MatTableDataSource<UserDocument>();
+  totalDocuments: number = 0;
+  pageIndex: number = 0;
+  pageSize: number = 20;
 
   selectedDocument?: UserDocument;
 
@@ -48,7 +51,7 @@ export class DocumentListComponent implements AfterViewInit {
   }
 
   ngAfterViewInit() {
-    this.dataSource.paginator = this.paginator;
+    //this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
   }
 
@@ -67,13 +70,25 @@ export class DocumentListComponent implements AfterViewInit {
     })
   }
 
-  loadDocuments() {
-    this.documentService.getAllUserDocuments().subscribe({
-      next: documents => {
-        this.dataSource.data = documents;
+  loadDocuments(pageIndex: number = this.pageIndex, pageSize: number = this.pageSize) {
+    this.documentService.getAllUserDocuments(pageIndex, pageSize).subscribe({
+      next: response => {
+        this.totalDocuments = response.totalElements;
+        this.dataSource.data = response.content;
+        console.log(`pageIndex: ${pageIndex}`);
+        console.log(`pageSize: ${pageSize}`);
+        console.log(`totalDocuments: ${response.totalElements}`);
+        
       },
       error: err => console.error('Error al cargar documentos:', err)
     });
+  }
+
+  onPageChange(event: PageEvent) {
+    this.pageIndex = event.pageIndex;
+    this.pageSize = event.pageSize;
+    this.loadDocuments();
+    console.log(`paginatorLength: ${event.length}`);
   }
 
   selectDocument(doc: UserDocument) {

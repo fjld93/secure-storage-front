@@ -1,9 +1,10 @@
-import { HttpClient, HttpErrorResponse, HttpResponse } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpParams, HttpResponse } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { catchError, map, Observable, throwError } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { Metadata } from '@models/documents/metadata.model';
 import { UserDocument } from '@models/documents/user-document.model';
+import { Page } from '@models/page.model';
 
 @Injectable({
   providedIn: 'root'
@@ -17,9 +18,13 @@ export class DocumentService {
     return throwError(() => new Error(`Status: ${error.status}, error: ${error.message}`));
   }
 
-  getAllUserDocuments(): Observable<UserDocument[]> {
+  getAllUserDocuments(page: number = 0, size: number = 20): Observable<Page<UserDocument>> {
+    const params = new HttpParams()
+      .set('page', page)
+      .set('size', size);
+
     return this.http
-      .get<UserDocument[]>(`${this.baseUrl}/user`)
+      .get<Page<UserDocument>>(`${this.baseUrl}/user`, { params })
       .pipe(catchError(this.handleError));
   }
 
