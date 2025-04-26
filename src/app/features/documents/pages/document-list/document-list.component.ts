@@ -75,12 +75,9 @@ export class DocumentListComponent implements AfterViewInit {
       next: response => {
         this.totalDocuments = response.totalElements;
         this.dataSource.data = response.content;
-        console.log(`pageIndex: ${pageIndex}`);
-        console.log(`pageSize: ${pageSize}`);
-        console.log(`totalDocuments: ${response.totalElements}`);
         
       },
-      error: err => console.error('Error al cargar documentos:', err)
+      error: err => this.showErrorMessage('Error loading the documents')
     });
   }
 
@@ -88,7 +85,6 @@ export class DocumentListComponent implements AfterViewInit {
     this.pageIndex = event.pageIndex;
     this.pageSize = event.pageSize;
     this.loadDocuments();
-    console.log(`paginatorLength: ${event.length}`);
   }
 
   selectDocument(doc: UserDocument) {
