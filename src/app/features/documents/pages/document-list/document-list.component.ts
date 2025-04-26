@@ -53,6 +53,13 @@ export class DocumentListComponent implements AfterViewInit {
   ngAfterViewInit() {
     //this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
+    this.dataSource.filterPredicate = this.customDocumentFilter;
+  }
+
+  showErrorMessage(error: string) {
+    this._snackBar.open(String(error), '', {
+      duration: 2000
+    })
   }
 
   applyFilter(event: Event) {
@@ -64,18 +71,24 @@ export class DocumentListComponent implements AfterViewInit {
     }
   }
 
-  showErrorMessage(error: string) {
-    this._snackBar.open(String(error), '', {
-      duration: 2000
-    })
+  customDocumentFilter(doc: UserDocument, filter: string): boolean {
+
+    const matchesName = doc.name.toLowerCase().includes(filter);
+    const matchesDescription = doc.description.toLowerCase().includes(filter);
+
+    const matchesMetadata = doc.metadata?.some(meta =>
+      meta.name?.toLowerCase().includes(filter) ||
+      meta.value?.toLowerCase().includes(filter)
+    ) ?? false;
+
+    return matchesName || matchesDescription || matchesMetadata;
   }
 
   loadDocuments(pageIndex: number = this.pageIndex, pageSize: number = this.pageSize) {
     this.documentService.getAllUserDocuments(pageIndex, pageSize).subscribe({
       next: response => {
-        this.totalDocuments = response.totalElements;
         this.dataSource.data = response.content;
-        
+        this.totalDocuments = response.totalElements;
       },
       error: err => this.showErrorMessage('Error loading the documents')
     });

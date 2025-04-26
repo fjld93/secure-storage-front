@@ -4,7 +4,7 @@
     </button>
 </div>
 @if (document) {
-<mat-tab-group preserveContent (selectedTabChange)="onTabChange($event)">
+<mat-tab-group preserveContent >
     <mat-tab label="Details">
         <div class="details-container">
             <div class="property-container">
@@ -40,8 +40,8 @@
                     <mat-icon>add</mat-icon>
                     Add metadata
                 </button>
-                @if (metadata.length > 0) {
-                @for (data of metadata; track $index) {
+                @if (document.metadata && document.metadata.length > 0) {
+                @for (data of document.metadata; track $index) {
                 <div class="metadata-container">
                     <p>
                         <span>{{data.name | titlecase}}</span>

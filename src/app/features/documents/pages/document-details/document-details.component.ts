@@ -23,7 +23,7 @@ import { DocumentService } from '@services/document.service';
   templateUrl: './document-details.component.html',
   styleUrl: './document-details.component.css'
 })
-export class DocumentDetailsComponent implements OnChanges {
+export class DocumentDetailsComponent {
 
   private documentService: DocumentService = inject(DocumentService);
   private _snackBar = inject(MatSnackBar);
@@ -32,10 +32,6 @@ export class DocumentDetailsComponent implements OnChanges {
 
   @Input() document!: UserDocument;
   @Output() close = new EventEmitter<void>();
-
-  metadata: Metadata[] = [];
-
-  selectedTabIndex = 0;
 
   closeSidenav() {
     this.close.emit();
@@ -47,24 +43,24 @@ export class DocumentDetailsComponent implements OnChanges {
     })
   }
 
-  ngOnChanges(changes: SimpleChanges) {
-    if (changes['document'] && this.selectedTabIndex === 1) {
-      this.loadMetadata();
-    }
-  }
+  // ngOnChanges(changes: SimpleChanges) {
+  //   if (changes['document'] && this.selectedTabIndex === 1) {
+  //     this.loadMetadata();
+  //   }
+  // }
 
-  onTabChange(event: MatTabChangeEvent) {
-    this.selectedTabIndex = event.index;
-    if (event.index === 1) {
-      this.loadMetadata();
-    }
-  }
+  // onTabChange(event: MatTabChangeEvent) {
+  //   this.selectedTabIndex = event.index;
+  //   if (event.index === 1) {
+  //     this.loadMetadata();
+  //   }
+  // }
 
   loadMetadata() {
     if (document) {
       this.documentService.getDocumentMetadata(this.document.uuid).subscribe({
         next: (docMetadata) => {
-          this.metadata = docMetadata
+          this.document.metadata = docMetadata
         },
         error: err => this.showErrorMessage("Error loading the metadata")
       });
@@ -81,7 +77,7 @@ export class DocumentDetailsComponent implements OnChanges {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        if (md.uuid){
+        if (md.uuid) {
           this.updatedMetadata(md.uuid, result);
         }
         else {
@@ -98,8 +94,8 @@ export class DocumentDetailsComponent implements OnChanges {
       if (result) {
         this.documentService.deleteMetadata(md.uuid).subscribe({
           next: () => {
-            const index = this.metadata.findIndex(m => m.uuid === md.uuid);
-            if (index !== -1) this.metadata.splice(index, 1);
+            const index = this.document.metadata?.findIndex(m => m.uuid === md.uuid) ?? -1;
+            if (index !== -1) this.document.metadata!.splice(index, 1);
           },
           error: err => this.showErrorMessage("Error deleting the metadata")
         });
@@ -110,8 +106,8 @@ export class DocumentDetailsComponent implements OnChanges {
   updatedMetadata(uuid: string, newMetadata: Metadata) {
     this.documentService.updateMetadata(uuid, newMetadata).subscribe({
       next: (metadataUpdated) => {
-        const index = this.metadata.findIndex(m => m.uuid === metadataUpdated.uuid);
-        if (index !== -1) this.metadata[index] = metadataUpdated;
+        const index = this.document.metadata?.findIndex(m => m.uuid === metadataUpdated.uuid) ?? -1;
+        if (index !== -1) this.document.metadata![index] = metadataUpdated;
       },
       error: err => this.showErrorMessage("Error updating the metadata")
     });
@@ -120,7 +116,8 @@ export class DocumentDetailsComponent implements OnChanges {
   addMetadata(documentUuid: string, metadata: Metadata) {
     this.documentService.addMetadata(documentUuid, metadata).subscribe({
       next: (newMetadata) => {
-        this.metadata.push(newMetadata);
+        if (this.document.metadata) this.document.metadata.push(newMetadata);
+        else this.document.metadata = [newMetadata];
       },
       error: err => this.showErrorMessage("Error adding the metadata")
     });
