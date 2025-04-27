@@ -1,0 +1,35 @@
+.home-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 2rem;
+    height: calc(100% - 4rem - var(--mat-toolbar-standard-height));
+    background-color: #fff;
+}
+
+.home-container h1 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    color: #333;
+}
+
+.home-container h2 {
+    font-size: 1.25rem;
+    font-weight: 400;
+    color: #666;
+    margin-bottom: 2rem;
+    max-width: 600px;
+}
+
+.home-image {
+    width: 300px;
+    max-width: 80%;
+    margin-bottom: 2rem;
+}
+
+button {
+    font-size: 1rem;
+    padding: 0.75rem 2rem;
+}

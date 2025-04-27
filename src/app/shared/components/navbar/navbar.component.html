@@ -1,5 +1,8 @@
 <mat-toolbar>
-    <span>Secure Storage</span>
+    <a routerLink="/">
+        <img src="logo.png" alt="App Logo" class="logo">
+        <span>Secure Storage</span>
+    </a>
     <span class="spacer"></span>
     @if (!user()) {
     <button class="navbar-button" mat-stroked-button [routerLink]="['login']">Login</button>

@@ -9,3 +9,14 @@
 .username {
     font-size: 0.7em;
 }
+
+.logo {
+    height: 40px;
+    margin-right: 10px;
+    vertical-align: middle;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
