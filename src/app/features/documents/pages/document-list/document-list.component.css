@@ -3,7 +3,7 @@
 }
 
 .container {
-    height: calc(100% - var(--mat-toolbar-standard-height));
+    height: calc(100% - 1.5*var(--mat-toolbar-standard-height));
 }
 
 .tools-container {

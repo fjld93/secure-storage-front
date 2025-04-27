@@ -1,7 +1,7 @@
 .register-container {
     margin: 0 auto;
     max-width: 400px;
-    height: calc(100% - var(--mat-toolbar-standard-height));
+    height: calc(100% - 1.5*var(--mat-toolbar-standard-height));
     display: flex;
     flex-direction: column;
     justify-content: center;

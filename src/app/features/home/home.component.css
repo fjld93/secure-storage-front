@@ -5,7 +5,7 @@
     justify-content: center;
     text-align: center;
     padding: 2rem;
-    height: calc(100% - 4rem - var(--mat-toolbar-standard-height));
+    height: calc(100% - 4rem - 1.5*var(--mat-toolbar-standard-height));
     background-color: #fff;
 }
 
