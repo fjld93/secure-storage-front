@@ -30,7 +30,6 @@ import { DeleteElementDialogComponent } from '@documents/components/delete-eleme
 export class DocumentListComponent implements AfterViewInit {
 
   private documentService: DocumentService = inject(DocumentService);
-  private _snackBar = inject(MatSnackBar);
 
   readonly dialog = inject(MatDialog);
 
@@ -56,12 +55,6 @@ export class DocumentListComponent implements AfterViewInit {
     this.dataSource.filterPredicate = this.customDocumentFilter;
   }
 
-  showErrorMessage(error: string) {
-    this._snackBar.open(String(error), '', {
-      duration: 2000
-    })
-  }
-
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource.filter = filterValue.trim().toLowerCase();
@@ -85,13 +78,11 @@ export class DocumentListComponent implements AfterViewInit {
   }
 
   loadDocuments(pageIndex: number = this.pageIndex, pageSize: number = this.pageSize) {
-    this.documentService.getAllUserDocuments(pageIndex, pageSize).subscribe({
-      next: response => {
+    this.documentService.getAllUserDocuments(pageIndex, pageSize).subscribe(
+      response => {
         this.dataSource.data = response.content;
         this.totalDocuments = response.totalElements;
-      },
-      error: err => this.showErrorMessage('Error loading the documents')
-    });
+      });
   }
 
   onPageChange(event: PageEvent) {
@@ -140,17 +131,14 @@ export class DocumentListComponent implements AfterViewInit {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.documentService.deleteDocument(doc.uuid).subscribe({
-          next: () => {
-            const index = this.dataSource.data.findIndex(d => d.uuid === doc.uuid);
-            if (index > -1) {
-              const updatedSource = [...this.dataSource.data];
-              updatedSource.splice(index, 1);
-              this.dataSource.data = updatedSource;
-              this.clearSelection();
-            }
-          },
-          error: err => this.showErrorMessage("Error deleting the metadata")
+        this.documentService.deleteDocument(doc.uuid).subscribe(() => {
+          const index = this.dataSource.data.findIndex(d => d.uuid === doc.uuid);
+          if (index > -1) {
+            const updatedSource = [...this.dataSource.data];
+            updatedSource.splice(index, 1);
+            this.dataSource.data = updatedSource;
+            this.clearSelection();
+          }
         });
       }
     });
@@ -158,9 +146,8 @@ export class DocumentListComponent implements AfterViewInit {
 
   updateDocument(documentUuid: string, updatedDocument: Partial<Pick<UserDocument, 'name' | 'description'>>) {
 
-    this.documentService.updateDocument(documentUuid, updatedDocument).subscribe({
-      next: (newDocument) => {
-
+    this.documentService.updateDocument(documentUuid, updatedDocument).subscribe(
+      (newDocument) => {
         const index = this.dataSource.data.findIndex(doc => doc.uuid === newDocument.uuid);
 
         if (index > -1) {
@@ -169,9 +156,7 @@ export class DocumentListComponent implements AfterViewInit {
           this.dataSource.data = updatedSource;
         }
         this.clearSelection();
-      },
-      error: err => this.showErrorMessage("Error adding the metadata")
-    });
+      });
   }
 
   createDocument(name: string, description: string, file: File) {
@@ -182,19 +167,16 @@ export class DocumentListComponent implements AfterViewInit {
       content: file,
     };
 
-    this.documentService.createDocument(newDocument).subscribe({
-      next: (createdDocument) => {
+    this.documentService.createDocument(newDocument).subscribe(
+      (createdDocument) => {
         this.dataSource.data = [...this.dataSource.data, createdDocument];
         this.clearSelection();
-      },
-      error: err => this.showErrorMessage("Error creating document")
-    });
-
+      });
   }
 
   downloadDocument(document: UserDocument) {
-    this.documentService.getDocumentContent(document.uuid).subscribe({
-      next: (content) => {
+    this.documentService.getDocumentContent(document.uuid).subscribe(
+      (content) => {
         const blobUrl = window.URL.createObjectURL(content);
         const a = window.document.createElement('a');
         a.href = blobUrl;
@@ -204,8 +186,7 @@ export class DocumentListComponent implements AfterViewInit {
         a.click();
         window.URL.revokeObjectURL(blobUrl);
         window.document.body.removeChild(a);
-      }
-    });
+      });
   }
 
 }

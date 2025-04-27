@@ -29,7 +29,7 @@ export class LoginComponent {
   loading = signal(false);
 
   constructor() {
-    
+
     this.formLogin = this.fb.group({
       username: ["", Validators.required],
       password: ["", [Validators.required, Validators.minLength(4)]]
@@ -64,18 +64,11 @@ export class LoginComponent {
         .pipe(
           finalize(() => this.loading.set(false))
         )
-        .subscribe({
-          next: () => {
-            this._snackBar.open(`Successfully logged as: ${this.authService.user()?.username}`, '', {
-              duration: 2000
-            })
-            this.router.navigate(['/documents']);
-          },
-          error: (error) => {
-            this._snackBar.open(String(error), '', {
-              duration: 2000
-            })
-          }
+        .subscribe(() => {
+          this._snackBar.open(`Successfully logged as: ${this.authService.user()?.username}`, '', {
+            duration: 2000
+          })
+          this.router.navigate(['/documents']);
         })
     }
   }

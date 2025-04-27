@@ -37,12 +37,6 @@ export class DocumentDetailsComponent {
     this.close.emit();
   }
 
-  showErrorMessage(error: string) {
-    this._snackBar.open(String(error), '', {
-      duration: 2000
-    })
-  }
-
   // ngOnChanges(changes: SimpleChanges) {
   //   if (changes['document'] && this.selectedTabIndex === 1) {
   //     this.loadMetadata();
@@ -58,12 +52,10 @@ export class DocumentDetailsComponent {
 
   loadMetadata() {
     if (document) {
-      this.documentService.getDocumentMetadata(this.document.uuid).subscribe({
-        next: (docMetadata) => {
+      this.documentService.getDocumentMetadata(this.document.uuid).subscribe(
+        (docMetadata) => {
           this.document.metadata = docMetadata
-        },
-        error: err => this.showErrorMessage("Error loading the metadata")
-      });
+        });
     }
   }
 
@@ -92,35 +84,29 @@ export class DocumentDetailsComponent {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.documentService.deleteMetadata(md.uuid).subscribe({
-          next: () => {
+        this.documentService.deleteMetadata(md.uuid).subscribe(
+          () => {
             const index = this.document.metadata?.findIndex(m => m.uuid === md.uuid) ?? -1;
             if (index !== -1) this.document.metadata!.splice(index, 1);
-          },
-          error: err => this.showErrorMessage("Error deleting the metadata")
-        });
+          });
       }
     });
   }
 
   updatedMetadata(uuid: string, newMetadata: Metadata) {
-    this.documentService.updateMetadata(uuid, newMetadata).subscribe({
-      next: (metadataUpdated) => {
+    this.documentService.updateMetadata(uuid, newMetadata).subscribe(
+      (metadataUpdated) => {
         const index = this.document.metadata?.findIndex(m => m.uuid === metadataUpdated.uuid) ?? -1;
         if (index !== -1) this.document.metadata![index] = metadataUpdated;
-      },
-      error: err => this.showErrorMessage("Error updating the metadata")
-    });
+      });
   }
 
   addMetadata(documentUuid: string, metadata: Metadata) {
-    this.documentService.addMetadata(documentUuid, metadata).subscribe({
-      next: (newMetadata) => {
+    this.documentService.addMetadata(documentUuid, metadata).subscribe(
+      (newMetadata) => {
         if (this.document.metadata) this.document.metadata.push(newMetadata);
         else this.document.metadata = [newMetadata];
-      },
-      error: err => this.showErrorMessage("Error adding the metadata")
-    });
+      });
   }
 
 }

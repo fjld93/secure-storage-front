@@ -5,7 +5,7 @@ import { LoginRequest } from '@models/auth/login-request.model';
 import { RegisterRequest } from '@models/auth/register-request.model';
 import { AuthResponse } from '@models/auth/auth-response.model';
 import { HttpClient } from '@angular/common/http';
-import { catchError, map, Observable, tap, throwError } from 'rxjs';
+import { map, Observable, tap } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -33,12 +33,7 @@ export class AuthService {
         sessionStorage.setItem(this.TOKEN_KEY, res.token);
         this._user.set({ "username": credentials.username });
       }),
-      map(() => void 0),
-
-      catchError(err => {
-        console.error('Login failed:', err);
-        return throwError(() => new Error('Login failed. Please check your credentials.'));
-      })
+      map(() => void 0)
     );
   }
 
@@ -49,12 +44,7 @@ export class AuthService {
         sessionStorage.setItem(this.TOKEN_KEY, res.token);
         this._user.set({ "username": data.username });
       }),
-      map(() => void 0),
-
-      catchError(err => {
-        console.error('Register failed:', err);
-        return throwError(() => new Error('Registration failed. Please try again.'));
-      })
+      map(() => void 0)
     );
   }
 
