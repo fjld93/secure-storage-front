@@ -20,14 +20,15 @@
 }
 
 .document-row:hover {
-    background-color: antiquewhite;
+    background-color: #D9E3FC;
 }
 
 .document-row.selected-row {
-    background-color: aquamarine;
+    background-color: #005cbb;
+    color: #fff;
 }
 
-.documents-filter {
+.documents-filter ::ng-deep .mdc-text-field {
     width: 80%;
     border-radius: 1.5rem;
     overflow: hidden;
